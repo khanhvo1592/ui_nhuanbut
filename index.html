@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đánh giá Chi tiết Công việc</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Card styles */
+        .task-card {
+            border: none;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .task-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Header styles */
+        .task-card h5 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+        }
+
+        /* Complexity badge styles */
+        .complexity-badge {
+            font-size: 0.85em;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .complexity-1 { 
+            background: linear-gradient(45deg, #d4edda, #c3e6cb);
+            color: #155724;
+        }
+        
+        .complexity-2 { 
+            background: linear-gradient(45deg, #fff3cd, #ffeeba);
+            color: #856404;
+        }
+        
+        .complexity-3 { 
+            background: linear-gradient(45deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+        }
+
+        /* Evaluation section styles */
+        .evaluation-criteria {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border: 1px solid #e9ecef;
+        }
+
+        /* Input styles */
+        .score-input {
+            width: 80px;
+            text-align: center;
+            border-radius: 8px;
+            border: 2px solid #dee2e6;
+            padding: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .score-input:focus {
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        }
+
+        /* Notes input styles */
+        .note-input {
+            border-radius: 8px;
+            border: 2px solid #dee2e6;
+            padding: 8px 12px;
+        }
+
+        /* Timeline info styles */
+        .timeline-info {
+            background-color: #e8f4f8;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .timeline-info small {
+            display: block;
+            
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h3>Đánh giá Chi tiết Công việc</h3>
+        <div class="employee-info mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Chọn nhân viên:</label>
+                                <select class="form-control" id="employeeSelect">
+                                    <option value="">-- Chọn nhân viên --</option>
+                                    <option value="NV001">Võ Quốc Khánh - NV001</option>
+                                    <option value="NV002">Trần Thị B - NV002</option>
+                                    <option value="NV003">Lê Văn C - NV003</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Tháng đánh giá:</label>
+                                <input type="month" class="form-control" id="evaluationMonth">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="selected-employee-info mt-3" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <strong>Phòng ban:</strong> <span id="departmentInfo"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Chức vụ:</strong> <span id="positionInfo"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Số task trong tháng:</strong> <span id="taskCount">0</span>
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Điểm trung bình:</strong> <span id="monthlyAverage">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="taskList">
+            <!-- Task cards sẽ được render ở đây -->
+        </div>
+
+        <div class="text-right mt-4 mb-4">
+            <button class="btn btn-primary" onclick="saveAllEvaluations()">Lưu tất cả đánh giá</button>
+        </div>
+    </div>
+
+    <script>
+        const tasks = [
+            { "id": 1, "category": "Kỹ thuật", "name": "Chạy chương trình phục vụ Livestream", "complexity": 2 },
+            { "id": 2, "category": "Kỹ thuật", "name": "Điều khiển thiết bị kỹ thuật để thu hình", "complexity": 3 },
+            { "id": 3, "category": "Production Tasks", "name": "Dựng tác phẩm dự thi phát thanh", "complexity": 2 },
+            { "id": 4, "category": "Production Tasks", "name": "Đạo diễn xe màu chương trình quy mô lớn", "complexity": 3 },
+            { "id": 5, "category": "Technical Operations", "name": "Thiết kế ánh sáng cho chương trình", "complexity": 2 },
+            { "id": 6, "category": "Technical Operations", "name": "Điều khiển âm thanh trong buổi phát sóng", "complexity": 3 },
+            { "id": 7, "category": "Event Planning", "name": "Lên kế hoạch sự kiện truyền thông", "complexity": 1 },
+            { "id": 8, "category": "Event Planning", "name": "Chuẩn bị các tài liệu sự kiện", "complexity": 1 },
+            { "id": 9, "category": "Editing", "name": "Biên tập video quảng cáo", "complexity": 2 },
+            { "id": 10, "category": "Editing", "name": "Biên tập nội dung livestream", "complexity": 2 },
+            { "id": 11, "category": "Kỹ thuật", "name": "Chạy chương trình livestream thể thao", "complexity": 3 },
+            { "id": 12, "category": "Production Tasks", "name": "Dàn dựng sân khấu", "complexity": 3 },
+            { "id": 13, "category": "Technical Operations", "name": "Quản lý thiết bị thu phát tín hiệu", "complexity": 2 },
+            { "id": 14, "category": "Event Planning", "name": "Lên kế hoạch phân phối nội dung", "complexity": 2 },
+            { "id": 15, "category": "Editing", "name": "Chỉnh sửa hình ảnh cho bài viết", "complexity": 1 },
+            { "id": 16, "category": "Production Tasks", "name": "Chuẩn bị trang phục cho diễn viên", "complexity": 1 },
+            { "id": 17, "category": "Editing", "name": "Cắt ghép và biên tập video phỏng vấn", "complexity": 2 },
+            { "id": 18, "category": "Technical Operations", "name": "Kiểm tra hệ thống trước giờ phát sóng", "complexity": 3 },
+            { "id": 19, "category": "Kỹ thuật", "name": "Quản lý kênh chat livestream", "complexity": 1 },
+            { "id": 20, "category": "Production Tasks", "name": "Chuẩn bị đạo cụ cho chương trình", "complexity": 2 }
+        ];
+
+        // Thêm vào phần đầu của script
+        const employeeData = {
+            'NV001': {
+                name: 'Nguyễn Văn A',
+                department: 'Phòng Kỹ thuật',
+                position: 'Kỹ sư',
+                completedTasks: [
+                    {
+                        taskId: 1,
+                        startDate: '2024-03-01',
+                        endDate: '2024-03-02',
+                        status: 'completed'
+                    },
+                    {
+                        taskId: 2,
+                        startDate: '2024-03-03',
+                        endDate: '2024-03-04',
+                        status: 'completed'
+                    },
+                    {
+                        taskId: 11,
+                        startDate: '2024-03-05',
+                        endDate: '2024-03-06',
+                        status: 'completed'
+                    }
+                ]
+            },
+            'NV002': {
+                name: 'Trần Thị B',
+                department: 'Phòng Production',
+                position: 'Producer',
+                completedTasks: [
+                    {
+                        taskId: 3,
+                        startDate: '2024-03-01',
+                        endDate: '2024-03-03',
+                        status: 'completed'
+                    },
+                    {
+                        taskId: 4,
+                        startDate: '2024-03-04',
+                        endDate: '2024-03-06',
+                        status: 'completed'
+                    }
+                ]
+            }
+        };
+
+        function renderTaskCard(task) {
+            return `
+                <div class="task-card" data-category="${task.category}">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5>${task.name}</h5>
+                            <div class="text-muted">Danh mục: ${task.category}</div>
+                        </div>
+                        <span class="complexity-badge complexity-${task.complexity}">
+                            Độ phức tạp: ${task.complexity}
+                        </span>
+                    </div>
+
+                    <div class="evaluation-criteria">
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <label>Chất lượng thực hiện (40%)</label>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" class="form-control score-input" 
+                                    min="0" max="10" data-task-id="${task.id}" data-criteria="quality">
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" placeholder="Ghi chú">
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <label>Thời gian hoàn thành (30%)</label>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" class="form-control score-input" 
+                                    min="0" max="10" data-task-id="${task.id}" data-criteria="time">
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" placeholder="Ghi chú">
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <label>Độ chính xác (30%)</label>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" class="form-control score-input" 
+                                    min="0" max="10" data-task-id="${task.id}" data-criteria="accuracy">
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" placeholder="Ghi chú">
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-md-8">
+                                <label>Điểm trung bình:</label>
+                                <span class="h5 ml-2" id="average-${task.id}">0</span>/10
+                            </div>
+                            <div class="col-md-4">
+                                <span class="badge badge-info" id="rating-${task.id}">Chưa đánh giá</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function calculateTaskAverage(taskId) {
+            const inputs = document.querySelectorAll(`input[data-task-id="${taskId}"]`);
+            let total = 0;
+            let count = 0;
+
+            inputs.forEach(input => {
+                if (input.value) {
+                    const value = parseFloat(input.value);
+                    const criteria = input.dataset.criteria;
+                    
+                    // Áp dụng trọng số
+                    switch(criteria) {
+                        case 'quality': total += value * 0.4; break;
+                        case 'time': total += value * 0.3; break;
+                        case 'accuracy': total += value * 0.3; break;
+                    }
+                    count++;
+                }
+            });
+
+            if (count === 3) { // Chỉ tính khi đã nhập đủ 3 tiêu chí
+                const average = total.toFixed(2);
+                document.getElementById(`average-${taskId}`).textContent = average;
+                updateRating(taskId, average);
+            }
+        }
+
+        function updateRating(taskId, score) {
+            const ratingElement = document.getElementById(`rating-${taskId}`);
+            let rating, className;
+
+            if (score >= 9) {
+                rating = 'Xuất sắc';
+                className = 'badge badge-success';
+            } else if (score >= 8) {
+                rating = 'Tốt';
+                className = 'badge badge-info';
+            } else if (score >= 7) {
+                rating = 'Khá';
+                className = 'badge badge-primary';
+            } else if (score >= 5) {
+                rating = 'Trung bình';
+                className = 'badge badge-warning';
+            } else {
+                rating = 'Cần cải thiện';
+                className = 'badge badge-danger';
+            }
+
+            ratingElement.textContent = rating;
+            ratingElement.className = className;
+        }
+
+        function filterTasks() {
+            const category = document.getElementById('categoryFilter').value;
+            const taskCards = document.querySelectorAll('.task-card');
+
+            taskCards.forEach(card => {
+                if (!category || card.dataset.category === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function saveAllEvaluations() {
+            // Logic lưu đánh giá vào database
+            alert('Đã lưu tất cả đánh giá thành công!');
+        }
+
+        // Thêm hàm render task đã hoàn thành
+        function renderCompletedTaskCard(task, completedInfo) {
+            return `
+                <div class="task-card" data-category="${task.category}">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5>${task.name}</h5>
+                            <div class="text-muted">Danh mục: ${task.category}</div>
+                            <div class="text-muted">
+                                Thời gian thực hiện: ${formatDate(completedInfo.startDate)} - ${formatDate(completedInfo.endDate)}
+                            </div>
+                        </div>
+                        <span class="complexity-badge complexity-${task.complexity}">
+                            Độ phức tạp: ${task.complexity}
+                        </span>
+                    </div>
+
+                    <div class="evaluation-criteria">
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <label>Chất lượng thực hiện (40%)</label>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" class="form-control score-input" 
+                                    min="0" max="10" data-task-id="${task.id}" data-criteria="quality">
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" placeholder="Ghi chú">
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <label>Thời gian hoàn thành (30%)</label>
+                                <small class="text-muted d-block">
+                                    Thời gian dự kiến: ${calculateExpectedDays(task.complexity)} ngày
+                                </small>
+                                <small class="text-muted d-block">
+                                    Thời gian thực tế: ${calculateActualDays(completedInfo.startDate, completedInfo.endDate)} ngày
+                                </small>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" class="form-control score-input" 
+                                    min="0" max="10" data-task-id="${task.id}" data-criteria="time">
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" placeholder="Ghi chú">
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <label>Độ chính xác (30%)</label>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" class="form-control score-input" 
+                                    min="0" max="10" data-task-id="${task.id}" data-criteria="accuracy">
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" placeholder="Ghi chú">
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-md-8">
+                                <label>Điểm trung bình:</label>
+                                <span class="h5 ml-2" id="average-${task.id}">0</span>/10
+                            </div>
+                            <div class="col-md-4">
+                                <span class="badge badge-info" id="rating-${task.id}">Chưa đánh giá</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Thêm các hàm tiện ích
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('vi-VN');
+        }
+
+        function calculateExpectedDays(complexity) {
+            switch(complexity) {
+                case 1: return 1;
+                case 2: return 2;
+                case 3: return 3;
+                default: return 1;
+            }
+        }
+
+        function calculateActualDays(startDate, endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const diffTime = Math.abs(end - start);
+            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        }
+
+        // Cập nhật hàm updateEmployeeInfo
+        function updateEmployeeInfo(employeeId) {
+            const employee = employeeData[employeeId];
+            if (employee) {
+                document.querySelector('.selected-employee-info').style.display = 'block';
+                document.getElementById('departmentInfo').textContent = employee.department;
+                document.getElementById('positionInfo').textContent = employee.position;
+                document.getElementById('taskCount').textContent = employee.completedTasks.length;
+
+                // Render các task đã hoàn thành
+                const taskList = document.getElementById('taskList');
+                taskList.innerHTML = '';
+                
+                employee.completedTasks.forEach(completedTask => {
+                    const task = tasks.find(t => t.id === completedTask.taskId);
+                    if (task) {
+                        taskList.innerHTML += renderCompletedTaskCard(task, completedTask);
+                    }
+                });
+
+                // Thêm event listeners
+                document.querySelectorAll('.score-input').forEach(input => {
+                    input.addEventListener('input', (e) => {
+                        calculateTaskAverage(e.target.dataset.taskId);
+                        calculateMonthlyAverage();
+                    });
+                });
+            }
+        }
+
+        // Thêm hàm tính điểm trung bình tháng
+        function calculateMonthlyAverage() {
+            const averageElements = document.querySelectorAll('[id^="average-"]');
+            let total = 0;
+            let count = 0;
+
+            averageElements.forEach(element => {
+                const score = parseFloat(element.textContent);
+                if (!isNaN(score)) {
+                    total += score;
+                    count++;
+                }
+            });
+
+            const monthlyAverage = count > 0 ? (total / count).toFixed(2) : 0;
+            document.getElementById('monthlyAverage').textContent = monthlyAverage;
+        }
+
+        // Khởi tạo giao diện
+        document.addEventListener('DOMContentLoaded', () => {
+            const taskList = document.getElementById('taskList');
+            tasks.forEach(task => {
+                taskList.innerHTML += renderTaskCard(task);
+            });
+
+            // Thêm event listeners
+            document.querySelectorAll('.score-input').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    calculateTaskAverage(e.target.dataset.taskId);
+                });
+            });
+
+            document.getElementById('categoryFilter').addEventListener('change', filterTasks);
+        });
+    </script>
+</body>
+</html>
