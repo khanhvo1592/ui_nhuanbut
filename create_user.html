@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tạo Tài Khoản Nhân Viên</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .btn-create {
+            background-color: #28a745;
+            color: white;
+        }
+        .form-control {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center">Tạo Tài Khoản Nhân Viên</h2>
+        <form id="createAccountForm">
+            <div class="form-group">
+                <label for="name">Tên:</label>
+                <input type="text" class="form-control" id="name" placeholder="Nhập tên" required>
+            </div>
+            <div class="form-group">
+                <label for="fullName">Họ và Tên:</label>
+                <input type="text" class="form-control" id="fullName" placeholder="Nhập họ và tên" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Địa chỉ Email:</label>
+                <input type="email" class="form-control" id="email" placeholder="Nhập địa chỉ email" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Số điện thoại:</label>
+                <input type="tel" class="form-control" id="phone" placeholder="Nhập số điện thoại" required>
+            </div>
+            <div class="form-group">
+                <label for="location">Địa chỉ:</label>
+                <input type="text" class="form-control" id="location" placeholder="Nhập địa chỉ" required>
+            </div>
+            <div class="form-group">
+                <label for="salary">Bậc lương:</label>
+                <input type="text" class="form-control" id="salary" placeholder="Nhập bậc lương" required>
+            </div>
+            <div class="form-group">
+                <label for="position">Vị trí công tác:</label>
+                <input type="text" class="form-control" id="position" placeholder="Nhập vị trí công tác" required>
+            </div>
+            <div class="form-group">
+                <label for="title">Chức vụ:</label>
+                <input type="text" class="form-control" id="title" placeholder="Nhập chức vụ" required>
+            </div>
+            <button type="submit" class="btn btn-create">Tạo Tài Khoản</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('createAccountForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Ngăn chặn hành động mặc định của form
+            alert('Tài khoản nhân viên đã được tạo thành công!');
+        });
+    </script>
+</body>
+</html>

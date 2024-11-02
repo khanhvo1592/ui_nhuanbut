@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ Sơ Người Dùng</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .profile-header img {
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            margin-right: 20px;
+        }
+        .btn-save {
+            background-color: #003d97;
+            color: white;
+        }
+        .form-control {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center">Hồ Sơ Người Dùng</h2>
+        <div class="profile-header">
+            <img src="https://images.fineartamerica.com/images/artworkimages/mediumlarge/3/doremon-deepak-pengoria.jpg" alt="User Profile Picture">
+            <div>
+                <h4>Võ Quốc Khánh</h4>
+                <p>Kỹ thuật viên - Phòng Kỹ thuật và công nghệ</p>
+            </div>
+        </div>
+        <form id="userProfileForm">
+            <div class="form-group">
+                <label for="phone">Số điện thoại:</label>
+                <input type="tel" class="form-control" id="phone" value="(+98) 9123728167" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Địa chỉ Email:</label>
+                <input type="email" class="form-control" id="email" value="SaraTancredi@gmail.com" required>
+            </div>
+          
+            <div class="form-group">
+                <label for="location">Địa chỉ:</label>
+                <input type="text" class="form-control" id="location" value="e.g. New York, USA" required>
+            </div>
+            <div class="form-group">
+                <label for="salary">Bậc lương</label>
+                <input type="text" class="form-control" id="salary" value="" required>
+            </div>
+            <div class="form-group">
+                <label for="position">Vị trí công tác:</label>
+                <input type="text" class="form-control" id="position" value="" required>
+            </div>
+            <div class="form-group">
+                <label for="title">Chức vụ:</label>
+                <input type="text" class="form-control" id="title" value="" required>
+            </div>
+            <button type="submit" class="btn btn-save">Lưu</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('userProfileForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Ngăn chặn hành động mặc định của form
+            alert('Thông tin đã được cập nhật thành công!');
+        });
+    </script>
+</body>
+</html>
